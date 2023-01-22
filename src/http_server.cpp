@@ -7,10 +7,24 @@ namespace async_web_server_cpp
 
 HttpServer::HttpServer(const std::string& address, const std::string& port,
                        HttpServerRequestHandler request_handler,
-                       std::size_t thread_pool_size)
+                       std::size_t thread_pool_size,
+                       std::string cert_file,
+                       std::string private_key_file)
     : acceptor_(io_service_), thread_pool_size_(thread_pool_size),
-      request_handler_(request_handler)
+      request_handler_(request_handler),
+      ssl_context_(boost::asio::ssl::context::sslv23),
+      cert_file_(cert_file),
+      private_key_file_(private_key_file)
 {
+    if (cert_file_.empty() == false &&
+        private_key_file_.empty() == false)
+    {
+        ssl_context_.set_options(
+            boost::asio::ssl::context::default_workarounds
+            | boost::asio::ssl::context::no_sslv2);
+        ssl_context_.use_certificate_chain_file(cert_file_);
+        ssl_context_.use_private_key_file(private_key_file_, boost::asio::ssl::context::pem);
+    }
 
     boost::asio::ip::tcp::resolver resolver(io_service_);
     boost::asio::ip::tcp::resolver::query query(

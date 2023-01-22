@@ -5,6 +5,7 @@
 #include "async_web_server_cpp/http_request_handler.hpp"
 
 #include <boost/asio.hpp>
+#include <boost/asio/ssl.hpp>
 #include <boost/function.hpp>
 #include <boost/noncopyable.hpp>
 #include <boost/shared_ptr.hpp>
@@ -28,7 +29,9 @@ class HttpServer : private boost::noncopyable
 public:
     HttpServer(const std::string& address, const std::string& port,
                HttpServerRequestHandler request_handler,
-               std::size_t thread_pool_size);
+               std::size_t thread_pool_size,
+               std::string cert_file = "",
+               std::string private_key_file = "");
     ~HttpServer();
 
     void run();
@@ -46,6 +49,9 @@ private:
     std::vector<boost::shared_ptr<boost::thread>> threads_;
     boost::shared_ptr<HttpConnection> new_connection_;
     HttpServerRequestHandler request_handler_;
+    boost::asio::ssl::context ssl_context_;
+    std::string cert_file_;
+    std::string private_key_file_;
 };
 
 }  // namespace async_web_server_cpp

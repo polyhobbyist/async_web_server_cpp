@@ -29,12 +29,19 @@ target_include_directories(${PROJECT_NAME}
         $<INSTALL_INTERFACE:include>
 )
 
+get_cmake_property(_variableNames VARIABLES)
+list (SORT _variableNames)
+foreach (_variableName ${_variableNames})
+    message(STATUS "${_variableName}=${${_variableName}}")
+endforeach()
+
 target_link_libraries(${PROJECT_NAME}
     PUBLIC
         Boost::boost Boost::filesystem Boost::thread
     PRIVATE
         Boost::regex
         OpenSSL::Crypto
+        ${OPENSSL_LIBRARIES}
 )
 
 target_compile_definitions(${PROJECT_NAME}

@@ -3,7 +3,11 @@ target_compile_definitions(test_web_server
     PRIVATE
         "ASYNC_WEB_SERVER_CPP_TEST_DIR=\"${CMAKE_CURRENT_SOURCE_DIR}\""
 )
-target_link_libraries(test_web_server PRIVATE ${PROJECT_NAME})
+target_link_libraries(test_web_server 
+    PRIVATE 
+        ${PROJECT_NAME}
+        OpenSSL::Crypto
+)
 
 set(generated_test_file "${CMAKE_CURRENT_BINARY_DIR}/tests")
 set(TEST_WEB_SERVER_EXECUTABLE $<TARGET_FILE:test_web_server>)
